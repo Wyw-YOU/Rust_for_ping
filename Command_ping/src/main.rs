@@ -8,6 +8,12 @@ mod ping;
 async fn main() -> Result<(), anyhow::Error> {
     let args = cli::Args::parse();
     
+    if let Err(msg) = args.validate() {
+        eprintln!("Invalid arguments: {}", msg);
+        std::process::exit(2);
+    }
+    
+    
     println!("{}", format!("Command_ping v{}", env!("CARGO_PKG_VERSION")).cyan().bold());
     println!("Pinging {}...\n", args.host.green());
     

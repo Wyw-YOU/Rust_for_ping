@@ -1,4 +1,3 @@
-use std::time::Duration;
 use std::net::IpAddr;
 use surge_ping::{Client, Config, PingIdentifier, PingSequence, IcmpPacket};
 use tokio::time;
@@ -49,12 +48,12 @@ pub async fn ping_host(args: &crate::cli::Args) -> anyhow::Result<PingStatistics
         
         // 等待间隔时间
         if seq > 0 {
-            time::sleep(Duration::from_secs_f32(args.interval)).await;
+            time::sleep(args.interval_duration()).await;
         }
         
         // 使用tokio的timeout来设置超时
         match time::timeout(
-            Duration::from_secs_f32(args.timeout), 
+            args.timeout_duration(), 
             pinger.ping(PingSequence(seq as u16), &payload)
         ).await {
             Ok(Ok((packet, duration))) => {
